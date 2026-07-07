@@ -4,9 +4,9 @@ import os
 import pathlib
 
 import psycopg2
-DATABASE_URL='postgres://theau_megab_2687:tYzotg_Otd73igwtHdDifW_8HEAmhmIAMpuSJqKV2NDgzmrz9N_GIEG09oyc7vCL@theau-megab-2687.postgresql.c.osc-fr1.scalingo-dbs.com:33397/theau_megab_2687?sslmode=prefer'
+# DATABASE_URL='postgres:-//theau_megab_2687:tYzotg_Otd73igwtHdDifW_8HEAmhmIAMpuSJqKV2NDgzmrz9N_GIEG09oyc7vCL@theau-megab-2687.postgresql.c.osc-fr1.scalingo-dbs.com:33397/theau_megab_2687?sslmode=prefer'
 
-DB_URL = 'postgres://theau_megab_2687:tYzotg_Otd73igwtHdDifW_8HEAmhmIAMpuSJqKV2NDgzmrz9N_GIEG09oyc7vCL@theau-megab-2687.postgresql.c.osc-fr1.scalingo-dbs.com:33397/theau_megab_2687?sslmode=prefer'
+DB_URL = 'postgresql://groupe_sour_2498:ffQulDOlu5Mzi0m6uABj_gs_nLi7oY1G_sN1dsfM8jEhverQc3CddgSEsT25qe_m@groupe-sour-2498.postgresql.c.osc-fr1.scalingo-dbs.com:36363/groupe_sour_2498?sslmode=prefer'
 SCHEMA = pathlib.Path(__file__).resolve().parent / "schema.sql"
 
 
@@ -15,20 +15,7 @@ def connect():
 
 
 def create_schema(cur):
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS public.eau (
-        id                      TEXT PRIMARY KEY,
-        code_prelevement        TEXT,
-        libelle_parametre       TEXT,
-        resultat_alphanumerique TEXT,
-        resultat_numerique      DOUBLE PRECISION,
-        libelle_unite           TEXT,
-        date_prelevement        TEXT,
-        conclusion_conformite   TEXT,
-        nom_commune             TEXT,
-        insee_code              vARCHAR(5) REFERENCES commune (insee_code)
-    );
-    """)
+    cur.execute(SCHEMA.read_text())
 
 
 def count_rows(cur, table, dept):
