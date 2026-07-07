@@ -3,6 +3,7 @@ import requests
 import collect
 import clean
 import load
+from time import sleep
 
 
 DEPT = (sys.argv[1] if len(sys.argv) > 1 else "69").upper().zfill(2)
@@ -62,6 +63,8 @@ while True:
     if not data.get("next"):
         break
     page += 1
+    sleep(1)
+    
 
 print(f"qualite_eau_potable: {load.count_rows(cur, 'public.eau', DEPT)}")
 conn.commit()
