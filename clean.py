@@ -35,7 +35,7 @@ def _to_str(v):
     return str(v).strip()
 
 
-def clean_eau_resultats_dis(row):
+def clean_eau(row):
     return {
         # Identifiants géographiques
 
