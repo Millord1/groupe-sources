@@ -172,5 +172,13 @@ CREATE TABLE IF NOT EXISTS public.eau (
     date_prelevement        TEXT,
     conclusion_conformite   TEXT,
     nom_commune             TEXT,
-    insee_code              vARCHAR(5) REFERENCES commune (insee_code)
+    insee_code              VARCHAR(5) REFERENCES public.commune (insee_code)
+);
+
+CREATE TABLE IF NOT EXISTS public.geo_risque (
+    id SERIAL PRIMARY KEY,
+    num_risque TEXT,
+    libelle_risque_long TEXT,
+    zone_sismicite TEXT,
+    insee_code VARCHAR(5) REFERENCES public.commune (insee_code)
 );

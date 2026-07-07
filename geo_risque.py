@@ -32,19 +32,19 @@ seen = set()
 
 
 while True:
-    # for commune in known_communes:
-    try:
-        resp = session.get(
-            SEARCH,
-            params= {
-                "code_insee": ",".join(known_communes), "page_size": 100
-            }
-            # timeout=30
-        )
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        print(e)
-        break
+    for commune in known_communes:
+        try:
+            resp = session.get(
+                SEARCH,
+                params= {
+                    "code_insee": ",".join(known_communes), "page_size": 100
+                }
+                # timeout=30
+            )
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            print(e)
+            break
     
     data = resp.json()
     results = data.get("data", [])
@@ -52,9 +52,16 @@ while True:
         break
     
     chunk = []
+
     for risque in results:
+        risque = risque.get('risques_detail')
+        # TODO clean
         
-    
+        risque[0]['insee_code'] = results[0]['code_insee']
+        # print(risque[0])
+        chunk.append(risque[0])
+        
+        sys.exit()
     
     load.insert_chunk(cur, "geo_risque", chunk)
     conn.commit() 
