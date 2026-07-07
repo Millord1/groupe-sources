@@ -1,4 +1,3 @@
-"""Clean: une ligne de l'API -> dict prêt à insérer (les clés = colonnes SQL)."""
 
 # Les arrondissements de Lyon, Paris et Marseille ne sont pas dans la liste des
 # communes (geo.api renvoie une seule commune : 69123, 75056, 13055).
@@ -29,6 +28,34 @@ def _to_int(v):
     except (TypeError, ValueError):
         return None
 
+
+def _to_str(v):
+    if v is None:
+        return None
+    return str(v).strip()
+
+
+def clean_eau_resultats_dis(row):
+    return {
+        # Identifiants géographiques
+
+        "code_commune": _to_str(row.get("code_commune")),
+        "nom_commune": _to_str(row.get("nom_commune")),
+
+        # Paramètre qualité eau
+
+        "code_parametre": _to_str(row.get("code_parametre")),
+        "libelle_parametre": _to_str(row.get("libelle_parametre")),
+
+        # Résultat d’analyse
+
+        "resultat": _to_float(row.get("resultat")),
+        "unite": _to_str(row.get("unite")),
+
+        # Date prélèvement
+
+        "date_prelevement": row.get("date_prelevement"),
+    }
 
 def clean_education(row):
     return {

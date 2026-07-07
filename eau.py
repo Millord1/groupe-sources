@@ -3,7 +3,6 @@ import requests
 import collect
 import clean
 import load
-from time import sleep
 
 
 DEPT = (sys.argv[1] if len(sys.argv) > 1 else "69").upper().zfill(2)
@@ -53,7 +52,8 @@ while True:
         break  # plus de page
 
     chunk = []
-    for r in results:
+    for row in results:
+        r = clean.clean_eau(row)
         if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
             seen.add(r["identifiant"])
             chunk.append(r)
@@ -63,8 +63,6 @@ while True:
     if not data.get("next"):
         break
     page += 1
-    sleep(1)
-    
 
 print(f"qualite_eau_potable: {load.count_rows(cur, 'public.eau', DEPT)}")
 conn.commit()
