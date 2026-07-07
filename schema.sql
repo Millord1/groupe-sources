@@ -163,7 +163,7 @@ CREATE TABLE IF NOT EXISTS dechets_radioactifs (
 
 
 CREATE TABLE IF NOT EXISTS eau (
-    id                      TEXT PRIMARY KEY,
+    id                      SERIAL PRIMARY KEY,
     code_prelevement        TEXT,
     libelle_parametre       TEXT,
     resultat_alphanumerique TEXT,

@@ -26,7 +26,7 @@ except requests.RequestException as e:
 known_communes = load.insert_geography(cur, raw_communes)
 conn.commit()
 
-already = load.count_rows(cur, "public.eau", DEPT)
+already = load.count_rows(cur, "eau", DEPT)
 page = already // PER_PAGE + 1
 seen = set() 
 
@@ -57,13 +57,13 @@ while True:
         # if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
         #     seen.add(r["identifiant"])
         chunk.append(r)
-    load.insert_chunk(cur, "public.eau", chunk)
+    load.insert_chunk(cur, "eau", chunk)
     conn.commit() 
 
     if not data.get("next"):
         break
     page += 1
 
-print(f"qualite_eau_potable: {load.count_rows(cur, 'public.eau', DEPT)}")
+print(f"qualite_eau_potable: {load.count_rows(cur, 'eau', DEPT)}")
 conn.commit()
 conn.close()
