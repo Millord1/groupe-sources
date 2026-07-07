@@ -13,11 +13,10 @@ START_INDEX=$(( INDEX * PAR_CONTAINER ))
 echo "Index appliqué au tableau : ${INDEX}"
 echo "Tranche ciblée : index ${START_INDEX} à $(( START_INDEX + PAR_CONTAINER - 1 ))"
 
-TRANCHE=("${DEPTS[@]:$START_INDEX:$PAR_CONTAINER}")
 
 echo "Start processing"
 
-for dept in DEPTS; do
+for dept in "${DEPTS}"; do
     python eau.py "$dept"
 done
 
