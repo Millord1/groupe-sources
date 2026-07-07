@@ -39,18 +39,21 @@ def clean_eau(row):
     return {
         # Identifiants géographiques
 
-        "code_commune": _to_str(row.get("code_commune")),
+        "insee_code": _to_str(row.get("code_commune")),
         "nom_commune": _to_str(row.get("nom_commune")),
 
         # Paramètre qualité eau
 
-        "code_parametre": _to_str(row.get("code_parametre")),
+
         "libelle_parametre": _to_str(row.get("libelle_parametre")),
 
         # Résultat d’analyse
-
-        "resultat": _to_float(row.get("resultat")),
-        "unite": _to_str(row.get("unite")),
+        
+        "code_prelevement": row.get("code_prelevement"),
+        "resultat_alphanumerique": row.get("resultat_alphanumerique"),
+        "resultat_numerique": row.get("resultat_numerique"),
+        "libelle_unite": row.get("libelle_unite"),
+        "conclusion_conformite": row.get("conclusion_conformite"),
 
         # Date prélèvement
 

@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS dechets_radioactifs (
 );
 
 
-CREATE TABLE IF NOT EXISTS public.eau (
+CREATE TABLE IF NOT EXISTS eau (
     id                      TEXT PRIMARY KEY,
     code_prelevement        TEXT,
     libelle_parametre       TEXT,
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS public.eau (
     insee_code              VARCHAR(5) REFERENCES public.commune (insee_code)
 );
 
-CREATE TABLE IF NOT EXISTS public.geo_risque (
+CREATE TABLE IF NOT EXISTS geo_risque (
     id SERIAL PRIMARY KEY,
     num_risque TEXT,
     libelle_risque_long TEXT,

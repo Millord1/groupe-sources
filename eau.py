@@ -54,9 +54,9 @@ while True:
     chunk = []
     for row in results:
         r = clean.clean_eau(row)
-        if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
-            seen.add(r["identifiant"])
-            chunk.append(r)
+        # if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
+        #     seen.add(r["identifiant"])
+        chunk.append(r)
     load.insert_chunk(cur, "public.eau", chunk)
     conn.commit() 
 
