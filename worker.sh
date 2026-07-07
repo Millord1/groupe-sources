@@ -18,7 +18,7 @@ TRANCHE=("${DEPTS[@]:$START_INDEX:$PAR_CONTAINER}")
 echo "Start processing"
 
 for dept in "${TRANCHE[@]}"; do
-    python eau.py "$dept" && python geo_risque.py "$dept"
+    python eau.py "$dept"
 done
 
 echo "End, check the database"
