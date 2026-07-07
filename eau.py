@@ -52,8 +52,7 @@ while True:
         break  # plus de page
 
     chunk = []
-    for row in results:
-        r = clean.clean_eau(row)
+    for r in results:
         if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
             seen.add(r["identifiant"])
             chunk.append(r)

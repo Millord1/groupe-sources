@@ -17,7 +17,7 @@ TRANCHE=("${DEPTS[@]:$START_INDEX:$PAR_CONTAINER}")
 
 echo "Start processing"
 
-for dept in "${TRANCHE[@]}"; do
+for dept in DEPTS; do
     python eau.py "$dept"
 done
 
