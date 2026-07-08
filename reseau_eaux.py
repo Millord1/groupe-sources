@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 import collect
 
 load_dotenv()
-url_db = os.getenv("URL_DB")
+url_db = os.getenv("DATABASE_URL")
 
 conn = load.connect()
 cur = conn.cursor()
