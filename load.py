@@ -76,6 +76,7 @@ def insert_chunk(cur, table, chunk):
         return
     columns = list(chunk[0].keys())
     placeholders = ", ".join(f"%({c})s" for c in columns)
+    print(f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders}) ON CONFLICT DO NOTHING")
     cur.executemany(
         f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders}) ON CONFLICT DO NOTHING",
         chunk,
