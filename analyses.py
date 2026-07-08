@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 load_dotenv()
-url_db = os.getenv("URL_DB")
+url_db = os.getenv("DATABASE_URL")
 engine = create_engine(url_db)
 compte_reseau = pd.read_sql(
     """
