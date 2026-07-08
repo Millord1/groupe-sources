@@ -1,11 +1,10 @@
 import pandas as pd
 import sys
-
+import requests
+import collect
 import os
 from sqlalchemy import create_engine, text
 import load
-
-
 
 # postgresql+psycopg2://postgres:Mkilo1990@localhost:5432/megabase0
 
@@ -35,80 +34,98 @@ with engine.begin() as conn:
         )
     )
 
-DEPT = (sys.argv[1] if len(sys.argv) > 1 else "69").upper().zfill(2)
+dept = (sys.argv[1] if len(sys.argv) > 1 else "69").upper().zfill(2)
 
-url = f"https://files.data.gouv.fr/geo-dvf/latest/csv/2025/departements/{DEPT}.csv.gz"
+depts = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '2A', '2B', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46', '47', '48', '49', '50', '51', '52', '53', '54', '55', '56', '57', '58', '59', '60', '61', '62', '63', '64', '65', '66', '67', '68', '69', '70', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '90', '91', '92', '93', '94', '95', '971', '972', '973', '974', '976']
 
-# collecte les données brutes
+for dept in depts:
+    
+    conn = load.connect()
+    cur = conn.cursor()
+    load.create_schema(cur)
+    
+    try:
+        raw_communes = collect.fetch_communes(dept)
+    except requests.RequestException as e:
+        print(f"géographie indisponible ({type(e).__name__}), relance geo_risque.py {dept}")
+        raise SystemExit
+    known_communes = list(load.insert_geography(cur, raw_communes))
+    
+    conn.commit()
+    conn.close()
 
-df = pd.read_csv(url, dtype=str)
-# filtre les ventes
+    url = f"https://files.data.gouv.fr/geo-dvf/latest/csv/2025/departements/{dept}.csv.gz"
 
-df.rename(columns={'code_commune': 'insee_code'}, inplace=True) 
-df = df[["id_mutation",
-        "date_mutation",
-        "nature_mutation", 
-        "valeur_fonciere",
-        "id_parcelle",
-        "type_local",
-        "nombre_pieces_principales",
-        "longitude",
-        "latitude",
-        "insee_code",
-        "nom_commune"]]
-# convertit les colonnes numériques en type numérique
+    # collecte les données brutes
 
-df["valeur_fonciere"] = pd.to_numeric(df["valeur_fonciere"], errors='coerce')
-df["nombre_pieces_principales"] = df["nombre_pieces_principales"].astype("Int64")
-df["latitude"] = pd.to_numeric(df["latitude"], errors='coerce')
-df["longitude"] = pd.to_numeric(df["longitude"], errors='coerce')
+    df = pd.read_csv(url, dtype=str)
+    # filtre les ventes
 
-codes_valides = set(
-    pd.read_sql("SELECT insee_code FROM commune", engine)["insee_code"]
-)
+    df.rename(columns={'code_commune': 'insee_code'}, inplace=True) 
+    df = df[["id_mutation",
+            "date_mutation",
+            "nature_mutation", 
+            "valeur_fonciere",
+            "id_parcelle",
+            "type_local",
+            "nombre_pieces_principales",
+            "longitude",
+            "latitude",
+            "insee_code",
+            "nom_commune"]]
+    # convertit les colonnes numériques en type numérique
 
-df.loc[~df["insee_code"].isin(codes_valides), "insee_code"] = "99999"
+    df["valeur_fonciere"] = pd.to_numeric(df["valeur_fonciere"], errors='coerce')
+    df["nombre_pieces_principales"] = df["nombre_pieces_principales"].astype("Int64")
+    df["latitude"] = pd.to_numeric(df["latitude"], errors='coerce')
+    df["longitude"] = pd.to_numeric(df["longitude"], errors='coerce')
 
-#print(df.head())
+    codes_valides = set(
+        pd.read_sql("SELECT insee_code FROM commune", engine)["insee_code"]
+    )
 
-#conn = psycopg2.connect("postgresql://postgres:Mkilo1990@localhost:5432/megabase0")
+    df.loc[~df["insee_code"].isin(codes_valides), "insee_code"] = "99999"
 
-conn = load.connect()
-cur = conn.cursor()
+    #print(df.head())
 
-nb_lignes = len(df)
+    #conn = psycopg2.connect("postgresql://postgres:Mkilo1990@localhost:5432/megabase0")
 
-nb_lignes_in_db = load.count_rows(cur, 'DVF', DEPT)
+    conn = load.connect()
+    cur = conn.cursor()
 
-print(f"=== département {DEPT} ===")
+    nb_lignes = len(df)
 
-if nb_lignes_in_db > 0:
-    print(f"Déjà {nb_lignes_in_db} lignes DVF pour le département {DEPT}, pas d'insertion nécessaire.")
-    sys.exit(0)
+    nb_lignes_in_db = load.count_rows(cur, 'DVF', dept)
 
-with engine.begin() as conn:
-    conn.exec_driver_sql("""
-        INSERT INTO region (code_region, name)
-        VALUES ('99', 'Inconnue')
-        ON CONFLICT (code_region) DO NOTHING;
+    print(f"=== département {dept} ===")
 
-        INSERT INTO departement (code_departement, name, code_region)
-        VALUES ('99', 'Inconnu', '99')
-        ON CONFLICT (code_departement) DO NOTHING;
+    if nb_lignes_in_db > 0:
+        print(f"Déjà {nb_lignes_in_db} lignes DVF pour le département {dept}, pas d'insertion nécessaire.")
+        sys.exit(0)
 
-        INSERT INTO commune (insee_code, name, population, code_departement)
-        VALUES ('99999', 'Commune inconnue', 0, '99')
-        ON CONFLICT (insee_code) DO NOTHING;
-    """)
+    with engine.begin() as conn:
+        conn.exec_driver_sql("""
+            INSERT INTO region (code_region, name)
+            VALUES ('99', 'Inconnue')
+            ON CONFLICT (code_region) DO NOTHING;
 
+            INSERT INTO departement (code_departement, name, code_region)
+            VALUES ('99', 'Inconnu', '99')
+            ON CONFLICT (code_departement) DO NOTHING;
 
-
-
-df.to_sql("dvf", engine, if_exists="append", index=False, method="multi", chunksize=1000)
-
+            INSERT INTO commune (insee_code, name, population, code_departement)
+            VALUES ('99999', 'Commune inconnue', 0, '99')
+            ON CONFLICT (insee_code) DO NOTHING;
+        """)
 
 
-print(f"Réussite : {load.count_rows(cur, 'DVF', DEPT)} lignes DVF insérées pour le département {DEPT}")
+
+
+    df.to_sql("dvf", engine, if_exists="append", index=False, method="multi", chunksize=1000)
+
+
+
+    print(f"Réussite : {load.count_rows(cur, 'DVF', dept)} lignes DVF insérées pour le département {dept}")
 
 
 #print(pd.read_sql("SELECT * FROM dvf LIMIT 10", engine))
