@@ -8,6 +8,7 @@ load_dotenv()
 
 url_db = os.getenv("DATABASE_URL")
 engine = create_engine(url_db.replace("postgres://", "postgresql+psycopg2://", 1))
+print("reseau_eau \n")
 compte_reseau = pd.read_sql(
     """
     SELECT
@@ -25,7 +26,9 @@ compte_reseau = pd.read_sql(
     """,
     engine
 )
-print('compte reseau',compte_reseau)
+print(compte_reseau)
+
+print("qualite_eau \n")
 eau= pd.read_sql(
     """
     SELECT
@@ -44,7 +47,8 @@ eau= pd.read_sql(
     engine
 )
 
-print('compte eau',eau)
+print(eau)
+print("geo_risque \n")
 geo_risque= pd.read_sql(
     """
     SELECT
@@ -63,10 +67,13 @@ geo_risque= pd.read_sql(
     engine
 )
 
-print('compte geo_risque',geo_risque)
+print(geo_risque)
+
+print("dvf\n")
 DVF= pd.read_sql(
     """
-  d.name,
+    SELECT
+        d.name,
         d.code_departement,
         COUNT(*) AS nb_result
     FROM dvf AS dv
@@ -80,6 +87,11 @@ DVF= pd.read_sql(
     """,
     engine
 )
+print(DVF)
 
-print('compte DVF',DVF)
+DVF.to_csv("dvf.csv", index=False)
+geo_risque.to_csv("geo_risque.csv", index=False)
+eau.to_csv("eau.csv", index=False)
+compte_reseau.to_csv("compte_reseau.csv", index=False)
+
 
