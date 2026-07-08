@@ -14,7 +14,7 @@ compte_reseau = pd.read_sql(
         d.name,
         d.code_departement,
         COUNT(*) AS nb_reseaux
-    FROM reseaureseau_eau AS r
+    FROM reseau_eau AS r
     JOIN commune AS c
         ON r.code_commune = c.insee_code
     JOIN departement AS d
