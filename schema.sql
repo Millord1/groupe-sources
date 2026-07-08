@@ -176,9 +176,9 @@ CREATE TABLE IF NOT EXISTS eau (
 );
 
 CREATE TABLE IF NOT EXISTS geo_risque (
-    id SERIAL PRIMARY KEY,
     num_risque TEXT,
     libelle_risque_long TEXT,
     zone_sismicite TEXT,
-    insee_code VARCHAR(5) REFERENCES public.commune (insee_code)
+    insee_code VARCHAR(5) REFERENCES public.commune (insee_code),
+    PRIMARY KEY (num_risque, insee_code)
 );
