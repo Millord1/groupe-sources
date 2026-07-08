@@ -16,26 +16,26 @@ cur = conn.cursor()
 load.create_schema(cur)
 conn.close()
 
-engine = create_engine(url_db)
+engine = create_engine(url_db.replace("postgres://", "postgresql+psycopg2://", 1))
 print(url_db)
-with engine.begin() as conn:
-      conn.execute("""
+# with engine.begin() as conn:
+#       conn.execute("""
         
-        CREATE TABLE IF NOT EXISTS reseau_eau(
+#         CREATE TABLE IF NOT EXISTS reseau_eau(
          
-    code_commune VARCHAR(10) NOT NULL,
-    nom_commune TEXT,
-    nom_quartier VARCHAR(100),
-    code_reseau VARCHAR(20),
-    nom_reseau VARCHAR(100),
-    debut_alim DATE,
-    annee INTEGER,
+#     code_commune VARCHAR(10) NOT NULL,
+#     nom_commune TEXT,
+#     nom_quartier VARCHAR(100),
+#     code_reseau VARCHAR(20),
+#     nom_reseau VARCHAR(100),
+#     debut_alim DATE,
+#     annee INTEGER,
 
-    CONSTRAINT fk_commune
-        FOREIGN KEY (code_commune)
-        REFERENCES commune(insee_code)
-            )
-    """)
+#     CONSTRAINT fk_commune
+#         FOREIGN KEY (code_commune)
+#         REFERENCES commune(insee_code)
+#             )
+#     """)
 
 df = pd.read_sql(
     """
