@@ -77,16 +77,8 @@ for dept in depts:
             
         sleep(0.5)
             
-        # page = data.get('page')
-        # if data.get('page') is not data.get('total_pages'):
-        #     break
-        # if page >= data.get("total_pages", 0):
-        #     break
-        # page += 1
-        # if page * PER_PAGE >= 10_000:
-        #     break
-
-    load.insert_chunk(cur, "geo_risque", chunk)
+    chunk_plat = [item for sublist in chunk for item in sublist]
+    load.insert_chunk(cur, "geo_risque", chunk_plat)
 
     print(f"geo_risques: {load.count_rows(cur, 'geo_risque', dept)}")
     conn.commit()

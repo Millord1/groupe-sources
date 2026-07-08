@@ -75,7 +75,6 @@ def insert_mairies(cur, raw_communes):
         rows,
     )
 
-
 def insert_chunk(cur, table, chunk):
     """Insère un chunk de dicts. Les colonnes sont les clés des dicts."""
     if not chunk:
