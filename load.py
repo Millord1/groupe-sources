@@ -2,17 +2,18 @@
 
 import os
 import pathlib
+from dotenv import load_dotenv
 
 import psycopg2
 # DATABASE_URL='postgres:-//theau_megab_2687:tYzotg_Otd73igwtHdDifW_8HEAmhmIAMpuSJqKV2NDgzmrz9N_GIEG09oyc7vCL@theau-megab-2687.postgresql.c.osc-fr1.scalingo-dbs.com:33397/theau_megab_2687?sslmode=prefer'
 
-DB_URL = 'postgresql://groupe_sour_2498:ffQulDOlu5Mzi0m6uABj_gs_nLi7oY1G_sN1dsfM8jEhverQc3CddgSEsT25qe_m@groupe-sour-2498.postgresql.c.osc-fr1.scalingo-dbs.com:36363/groupe_sour_2498?sslmode=prefer'
+load_dotenv()
+DB_URL = os.environ.get('DATABASE_URL')
 SCHEMA = pathlib.Path(__file__).resolve().parent / "schema.sql"
 
 
 def connect():
     return psycopg2.connect(DB_URL)
-
 
 def create_schema(cur):
     cur.execute(SCHEMA.read_text())
@@ -27,6 +28,11 @@ def count_rows(cur, table, dept):
     cur.execute(f"SELECT count(*) FROM {table} WHERE insee_code LIKE %s", (dept + "%",))
     return cur.fetchone()[0]
 
+def count_geo(cur, table, communes):
+    cur.execute(f"""
+        SELECT COUNT(*) FROM {table} WHERE insee_code IN ({communes})            
+    """)
+    return cur.fetchone()[0]
 
 def insert_geography(cur, raw_communes):
     """Insère région, département, commune (dans l'ordre des clés étrangères).
@@ -69,14 +75,12 @@ def insert_mairies(cur, raw_communes):
         rows,
     )
 
-
 def insert_chunk(cur, table, chunk):
     """Insère un chunk de dicts. Les colonnes sont les clés des dicts."""
     if not chunk:
         return
     columns = list(chunk[0].keys())
     placeholders = ", ".join(f"%({c})s" for c in columns)
-    print(f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders}) ON CONFLICT DO NOTHING")
     cur.executemany(
         f"INSERT INTO {table} ({', '.join(columns)}) VALUES ({placeholders}) ON CONFLICT DO NOTHING",
         chunk,
