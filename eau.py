@@ -57,6 +57,8 @@ for dept in depts:
         chunk = []
         for row in results:
             r = clean.clean_eau(row)
+            if(r['insee_code']) not in known_communes:
+                pass
             # if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
             #     seen.add(r["identifiant"])
             chunk.append(r)
