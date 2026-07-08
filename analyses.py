@@ -7,7 +7,7 @@ import os
 load_dotenv()
 
 url_db = os.getenv("DATABASE_URL")
-engine = create_engine(url_db)
+engine = create_engine(url_db.replace("postgres://", "postgresql+psycopg2://", 1))
 compte_reseau = pd.read_sql(
     """
     SELECT
