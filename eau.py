@@ -57,11 +57,10 @@ for dept in depts:
         chunk = []
         for row in results:
             r = clean.clean_eau(row)
-            if(r['insee_code']) not in known_communes:
-                pass
+            if(r['insee_code']) in known_communes:
+                chunk.append(r)
             # if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
             #     seen.add(r["identifiant"])
-            chunk.append(r)
             
         load.insert_chunk(cur, "eau", chunk)
         conn.commit() 
@@ -70,6 +69,6 @@ for dept in depts:
             break
         page += 1
 
-    print(f"qualite_eau_potable: {load.count_geo(cur, 'eau', dept)}")
+    print(f"qualite_eau_potable: {load.count_rows(cur, 'eau', dept)}")
     conn.commit()
 conn.close()

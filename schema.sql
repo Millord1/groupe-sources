@@ -182,3 +182,18 @@ CREATE TABLE IF NOT EXISTS geo_risque (
     insee_code TEXT REFERENCES commune (insee_code),
     PRIMARY KEY (num_risque, insee_code)
 );
+
+CREATE TABLE IF NOT EXISTS dvf (
+    id_dvf          SERIAL PRIMARY KEY,
+    id_mutation     TEXT,
+    date_mutation   TEXT,
+    nature_mutation TEXT,
+    valeur_fonciere  DOUBLE PRECISION,  
+    id_parcelle     TEXT,
+    type_local      TEXT,
+    nombre_pieces_principales INTEGER,
+    nom_commune      TEXT,
+    longitude       DOUBLE PRECISION,
+    latitude        DOUBLE PRECISION,
+    insee_code       TEXT REFERENCES commune (insee_code)
+);
