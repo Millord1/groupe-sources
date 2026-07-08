@@ -197,3 +197,18 @@ CREATE TABLE IF NOT EXISTS dvf (
     latitude        DOUBLE PRECISION,
     insee_code       TEXT REFERENCES commune (insee_code)
 );
+
+CREATE TABLE IF NOT EXISTS reseau_eau(
+         
+    code_commune VARCHAR(10) NOT NULL,
+    nom_commune TEXT,
+    nom_quartier VARCHAR(100),
+    code_reseau VARCHAR(20),
+    nom_reseau VARCHAR(100),
+    debut_alim DATE,
+    annee INTEGER,
+
+    CONSTRAINT fk_commune
+        FOREIGN KEY (code_commune)
+        REFERENCES commune(insee_code)
+);

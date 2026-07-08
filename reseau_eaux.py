@@ -1,14 +1,21 @@
 import requests
 import pandas as pd
-import psycopg2
+import load
 import requests
 import pandas as pd
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+import collect
 
 load_dotenv()
 url_db = os.getenv("URL_DB")
+
+conn = load.connect()
+cur = conn.cursor()
+load.create_schema(cur)
+conn.close()
+
 engine = create_engine(url_db)
 print(url_db)
 with engine.begin() as conn:
@@ -40,6 +47,19 @@ url = "https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/communes_udi"
 
 LIMIT = 100
 for code_commune in df["insee_code"].unique():
+    dept = code_commune[:2]
+    
+    conn = load.connect()
+    cur = conn.cursor()
+    
+    try:
+        raw_communes = collect.fetch_communes(dept)
+    except requests.RequestException as e:
+        print(f"géographie indisponible ({type(e).__name__}), relance geo_risque.py {dept}")
+        raise SystemExit
+    known_communes = list(load.insert_geography(cur, raw_communes))
+    conn.commit()
+    conn.close()
 
     offset = 0
 

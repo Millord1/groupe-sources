@@ -8,9 +8,13 @@ import load
 
 # postgresql+psycopg2://postgres:Mkilo1990@localhost:5432/megabase0
 
+
+
 DB_URL = os.environ.get("DATABASE_URL", "postgresql://localhost/megabase0")
 engine = create_engine(DB_URL.replace("postgres://", "postgresql://", 1))
 
+
+    
 with engine.begin() as conn:
 #    conn.execute(text("DROP TABLE IF EXISTS dvf"))  
 
