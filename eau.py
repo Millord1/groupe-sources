@@ -15,13 +15,13 @@ for dept in depts:
     SEARCH = "https://hubeau.eaufrance.fr/api/v1/qualite_eau_potable/resultats_dis"
     PER_PAGE = 20000
 
-
     session = requests.Session()
     session.headers["User-Agent"] = "megabase-corrige0 (formation)"
 
     conn = load.connect()
     cur = conn.cursor()
     load.create_schema(cur)
+    
     try:
         raw_communes = collect.fetch_communes(dept)
     except requests.RequestException as e:
