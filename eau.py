@@ -57,7 +57,7 @@ while True:
         # if r["identifiant"] and r["insee_code"] in known_communes and r["identifiant"] not in seen:
         #     seen.add(r["identifiant"])
         chunk.append(r)
-    print(chunk)
+        
     load.insert_chunk(cur, "eau", chunk)
     conn.commit() 
 
